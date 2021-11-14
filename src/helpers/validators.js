@@ -13,23 +13,29 @@
  * Если какие либо функции написаны руками (без использования библиотек) это не является ошибкой
  */
 
- import * as R from 'ramda';
+import { prop, compose, equals, allPass } from 'ramda';
 
- const isWhite = R.equals('white');
- const isOrange = R.equals('orange');
- const isRed = R.equals('red');
- const isGreen = R.equals('green');
- const isBlue = R.equals('blue');
- const getLength = (obj) => obj.length;
+const getLength = prop('length');
+
+const getStar = prop('star');
+const getSquare = prop('square');
+const getTriangle = prop('triangle');
+const getCircle = prop('circle');
+
+const isWhite = equals('white');
+const isOrange = equals('orange');
+const isRed = equals('red');
+const isGreen = equals('green');
+const isBlue = equals('blue');
 
 // 1. Красная звезда, зеленый квадрат, все остальные белые.
 export const validateFieldN1 = (shapes) => {
-    return R.allPass([
-		R.compose(isRed, R.prop('star')),
-		R.compose(isGreen, R.prop('square')),
-		R.compose(isWhite, R.prop('triangle')),
-		R.compose(isWhite, R.prop('circle')),
-	])(obj);
+    return allPass([
+        compose(isRed, getStar),
+        compose(isGreen, getSquare),
+        compose(isWhite, getTriangle),
+        compose(isWhite, getCircle),
+    ])(shapes);
 };
 
 // 2. Как минимум две фигуры зеленые.
