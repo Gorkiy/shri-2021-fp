@@ -15,7 +15,8 @@
  * Ответ будет приходить в поле {result}
  */
 
-import { __, allPass, andThen, ifElse, compose, gt, length, lt, test, modulo, prop, tap, concat, otherwise } from 'ramda';
+ import { round } from 'lodash';
+import { allPass, andThen, ifElse, compose, gt, length, lt, test, modulo, prop, tap, otherwise } from 'ramda';
 import Api from '../tools/api';
 
 const api = new Api();
@@ -32,15 +33,13 @@ const isValidLength = compose(allPass([gt(10), lt(2)]), length);
 const isValidNumber = test(/^\d+(\.\d+)?$/);
 const isValidInput = compose(allPass([isValidLength, isPositive, isValidNumber]), getValue);
 // Math
-const getRoundValue = compose(Math.round, parseFloat, getValue);
+const getRoundValue = compose(round, parseFloat, getValue);
 const getSquareValue = value => Math.pow(value, 2);
 const getRemainder = value => modulo(value, 3);
 // API
 const getApiTech = api.get('https://api.tech/numbers/base');
 const getBinary = input => getApiTech({ from: 10, to: 2, number: input });
-const getAnimalURL = concat('https://animals.tech/');
-const getApiAnimal = api.get(__, {});
-const getAnimal = compose(getApiAnimal, getAnimalURL);
+const getAnimal = id => api.get('https://animals.tech/' + id, {});
 // Other
 const handleValidationError = input => getHandleError(input)('ValidationError');
 
@@ -56,7 +55,6 @@ const processSequence = data => {
                 otherwise(getHandleError),
                 andThen(getSuccessData),
                 andThen(getResult),
-                andThen(tap(log)),
                 andThen(getAnimal),
                 andThen(tap(log)),
                 andThen(getRemainder),
